@@ -1,0 +1,1 @@
+hadoop fs -copyToLocal categories_string.csv ~/Local/

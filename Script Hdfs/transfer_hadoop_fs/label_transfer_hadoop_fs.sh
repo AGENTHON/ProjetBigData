@@ -1,0 +1,1 @@
+hadoop fs -put ~/label.csv

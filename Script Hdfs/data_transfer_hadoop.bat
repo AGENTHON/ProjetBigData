@@ -1,0 +1,3 @@
+scp -P 2222 D:\Cours\Big_data\data.json D:\Cours\Big_data\categories_string.csv D:\Cours\Big_data\label.csv D:\Cours\Big_data\Scripts\hdfs_to_local.sh root@127.0.0.1:~/
+Rem D:\Cours\Big_data\Scripts\categories_string_hadoop_fs.sh D:\Cours\Big_data\Scripts\data_transfer_hadoop_fs.sh D:\Cours\Big_data\Scripts\label_transfer_hadoop_fs.sh
+scp -P 2222 -r D:\Cours\Big_data\Scripts\transfer_hadoop_fs D:\Cours\Big_data\Scripts\hdfs_to_local root@127.0.0.1:~/

@@ -1,0 +1,1 @@
+hadoop fs -put ~/categories_string.csv
