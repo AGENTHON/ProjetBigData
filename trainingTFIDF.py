@@ -3,7 +3,7 @@ import numpy as np
 import nltk
 
 
-from sklearn import feature_extraction, model_selection, pipeline, manifold, preprocessing, svm, feature_selection, metrics
+from sklearn import feature_extraction, model_selection, pipeline, svm, metrics
 from utils import preprocess_text, macroDisparateImpact
 
 # Resources
@@ -71,5 +71,5 @@ predict.true=y_test
 predict.predicted=predicted
 
 # to csv
-predict.to_csv('/predict.csv')
+predict.to_csv('./predict.csv',index=False)
 
