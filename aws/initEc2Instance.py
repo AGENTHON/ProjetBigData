@@ -1,27 +1,26 @@
 import boto3
-import botocore
 import paramiko
 import time
 from botocore.exceptions import ClientError
-from os.path import expanduser
+from os import path
 
-SECURITY_GROUP_NAME = 'Lab3SecurityGroup'
-SECURITY_GROUP_DESCRIPTION = 'This is Security group for Lab3'
-KEY_PAIR_FILE_NAME = 'lab3-ec2-keypair'
+
+SECURITY_GROUP_NAME = 'BigDataProjectSecurityGroup'
+SECURITY_GROUP_DESCRIPTION = 'This is Security group for our BigData project'
+KEY_PAIR_FILE_NAME = 'BigDataProject-ec2-keypair'
 USERNAME = 'ec2-user'
 
 def initInstance() :
     print("Starting init EC2 instance ...")
     key_pair_file_name = KEY_PAIR_FILE_NAME
     instance_public_dns = createEc2Instance(key_pair_file_name)
-    #instance_public_dns='ec2-18-206-253-121.compute-1.amazonaws.com'
     client = connectInstance(key_pair_file_name, instance_public_dns)
     installPackets(client)
     sendEc2WorkerPythonFiles(client)
     startEc2Worker(client)
     
-    client.close()
     print("Init Ec2 instance done.")
+    return client
 
 
 def createEc2Instance(key_pair_file_name) :
@@ -78,7 +77,7 @@ def createEc2Instance(key_pair_file_name) :
         ImageId='ami-0c94855ba95c71c99',
         MinCount=1,
         MaxCount=1,
-        InstanceType='t2.micro',
+        InstanceType='t2.large',
         KeyName=key_pair_file_name,
         SecurityGroupIds=[
             security_group_id
@@ -115,60 +114,68 @@ def connectInstance(key_pair_file_name, instance_public_dns) :
         return client
     except Exception as e:
         print(e)
+
+def installPythonPackage(client,name):
+    print("Installing"+name+"...")
+    stdin, stdout, stderr = client.exec_command('sudo python3 -m pip install '+name)
+    print("E : %s / O : %s" %(stderr.read(), stdout.read()))
     
 
 def installPackets(client) :
-    print("Intalling python3 ...")
+    print("Installing python3 ...")
     stdin, stdout, stderr = client.exec_command('sudo yum install python3 -y')
     print("E : %s / O : %s" %(stderr.read(), stdout.read()))
-    print("Intalling boto3 ...")
-    stdin, stdout, stderr = client.exec_command('sudo python3 -m pip install boto3')
-    print("E : %s / O : %s" %(stderr.read(), stdout.read()))
-    #stdin, stdout, stderr = client.exec_command('sudo python3 -m pip install paramiko')
+    installPythonPackage(client,"scikit-learn")
+    installPythonPackage(client,"nltk")
+    installPythonPackage(client,"numpy")
+    installPythonPackage(client,"re")
+    installPythonPackage(client,"pandas")
+
+    
+    
 
 def sendEc2WorkerPythonFiles(client) :
     print("Sending Ec2 Worker Python Files ...")
     ftp_client=client.open_sftp()
 
-    local_home = expanduser("~")
+    local_home = path.expanduser("~")
     remote_home = "/home/"+USERNAME
 
-    ftp_client.put('../Serveur/serv.py',remote_home+'/serv.py')
+    ftp_client.put('../processing/trainingTFIDF.py',remote_home+'/trainingTFIDF.py')
+    ftp_client.put('../processing/utils.py',remote_home+'/utils.py')
+    ftp_client.put('../processing/data.json',remote_home+'/data.json')
+    ftp_client.put('../processing/label.csv',remote_home+'/label.csv')
+    ftp_client.put('../processing/categories_string.csv',remote_home+'/categories_string.csv')
 
-    local_aws = local_home+'/.aws'
-    remote_aws = remote_home+'/.aws'
-
-    print("Creating .aws directory ...")
-    ftp_client.mkdir(remote_aws)
-
-    print("Sending aws config ...")
-    ftp_client.put(local_aws+'/config', remote_aws+'/config')
-
-    print("Sending aws credentials ...")
-    ftp_client.put(local_aws+'/credentials', remote_aws+'/credentials')
 
     ftp_client.close()
     print("Done sending all worker files.")
 
 def startEc2Worker(client) :
-    #stdin, stdout, stderr = client.exec_command('ls ~/.aws')
-    #stdin, stdout, stderr = client.exec_command('ls -la')
-    #print("Error : %s" % stderr.read())
-    #print("Out : %s" % stdout.read())
+    print("Starting ec2 worker ...")
 
-    client.exec_command('nohup python3 serv.py &')
+    stdin, stdout, stderr = client.exec_command('python3 trainingTFIDF.py',get_pty = True)
+    print("E : %s / O : %s" %(stderr.read(), stdout.read()))
+    
+    print("Starting ec2 worker ...")
 
-'''
-def sendEc2WorkerPythonFiles(client) :
+
+def fetchPredictFile(client):
     ftp_client=client.open_sftp()
-    ftp_client.put('myfile.py','myfile.py')
-    ftp_client.close()
+    local_home = path.expanduser("~")
+    remote_home = "/home/"+USERNAME
 
-def startEc2Worker(client) :
-    stdin, stdout, stderr = client.exec_command('python3 myfile.py')
-    print("Error : %s" % stderr.read())
-    print("Out : %s" % stdout.read())
-'''
-#initInstance()
+    ftp_client.get(remote_home+'/predict.csv', '../result/predict.csv')
+    ftp_client.close()
+    print("Done fetching all worker files.")
+
+if __name__ == "__main__":
+
+    client=initInstance()
+    
+    fetchPredictFile(client)
+    
+    client.close()
+    
 
 
