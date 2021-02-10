@@ -14,5 +14,3 @@ En termes de données, nous avons :
   -	Le fichier “data.json“ : ce fichier contient l’id de la personne pour laquelle nous souhaitons prédire le poste et des phrases en anglais extraites du CV de la personne en question, et enfin le genre de la personne.
 
   -	 Le fichier “labes.csv“ : faire la correspondance entre l’id d’un individu et l’id de son poste.
-
-  -	Le fichier “categories_string.csv“ : donne pour chaque id le label du poste correspondant.
