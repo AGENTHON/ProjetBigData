@@ -39,7 +39,7 @@ Le script [**“initEc2Instance.py“**](https://github.com/AGENTHON/ProjetBigDa
 	
    - Envoyer les fichiers des données et les scripts de traitement sur l’instance
    
-   - Récupérer le fichier des résultats [**“predict.csv“**](https://github.com/AGENTHON/ProjetBigData/blob/main/aws/initEc2Instance.py) sur la machine locale.
+   - Récupérer le fichier des résultats [**“predict.csv“**](https://github.com/AGENTHON/ProjetBigData/blob/main/result/predict.csv) sur la machine locale.
 
 Le script [**“predict_to_mongodb.sh“**](https://github.com/AGENTHON/ProjetBigData/blob/main/predict_to_mongodb.sh) permet d'importer les données de prédiction depuis le fichier [**“predict.csv“**](https://github.com/AGENTHON/ProjetBigData/blob/main/processing/predict.csv) vers la base MongoDB
 
