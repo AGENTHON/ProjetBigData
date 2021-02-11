@@ -10,9 +10,9 @@ print("Starting processing of data ...")
 
 
 # Resources
-df = pd.read_json("data.json")
-label = pd.read_csv("label.csv")
-category = pd.read_csv("categories_string.csv")
+df = pd.read_json("./data.json")
+label = pd.read_csv("./label.csv")
+category = pd.read_csv("./categories_string.csv")
 
 
 # preprocessing

@@ -116,13 +116,13 @@ def connectInstance(key_pair_file_name, instance_public_dns) :
         print(e)
 
 def installPythonPackage(client,name):
-    print("Installing"+name+"...")
+    print("Installing: "+name+"...")
     stdin, stdout, stderr = client.exec_command('sudo python3 -m pip install '+name)
     print("E : %s / O : %s" %(stderr.read(), stdout.read()))
     
 
 def installPackets(client) :
-    print("Installing python3 ...")
+    print("Installing: python3 ...")
     stdin, stdout, stderr = client.exec_command('sudo yum install python3 -y')
     print("E : %s / O : %s" %(stderr.read(), stdout.read()))
     installPythonPackage(client,"scikit-learn")
@@ -154,7 +154,7 @@ def sendEc2WorkerPythonFiles(client) :
 def startEc2Worker(client) :
     print("Starting ec2 worker ...")
 
-    stdin, stdout, stderr = client.exec_command('python3 trainingTFIDF.py',get_pty = True)
+    stdin, stdout, stderr = client.exec_command('python3 trainingTFIDF.py')
     print("E : %s / O : %s" %(stderr.read(), stdout.read()))
     
     print("Starting ec2 worker ...")
